@@ -10,7 +10,7 @@ export default function(state = initialState, action) {
   switch (action.type) {
     case FETCH_POSTS:
       console.log(action.payload);
-      return { ...state, records: action.payload };
+      return { ...state, messages: action.payload };
 
     default:
       return state;

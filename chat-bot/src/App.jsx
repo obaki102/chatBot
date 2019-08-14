@@ -12,7 +12,6 @@ class App extends Component {
         <React.Fragment>
           <Header />
           <MessageList />
-          <MessageForm />
         </React.Fragment>
       </Provider>
     );

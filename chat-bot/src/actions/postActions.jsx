@@ -1,13 +1,23 @@
 import { FETCH_POSTS } from "./types";
 
-export const messages = () => dispatch => {
+export const fetchResponse = keyword => dispatch => {
   console.log("fetching..");
-  fetch("https://localhost:5001/api/customers")
+  let headers = new Headers();
+
+  headers.append("Content-Type", "application/json");
+  headers.append("Accept", "application/json");
+  headers.append("Origin", "http://localhost:3000");
+  fetch("http://silverbackdomain.com/tpxbot/v1/index.php/getKeyword", {
+    mode: "cors",
+    method: "POST",
+    headers: headers,
+    body: "keyword:metasolv"
+  })
     .then(res => res.json())
-    .then(customers =>
+    .then(post =>
       dispatch({
         type: FETCH_POSTS,
-        payload: customers
+        payload: post
       })
     );
 };

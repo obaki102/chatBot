@@ -7,11 +7,11 @@ class MessageForm extends Component {
   state = {};
   render() {
     return (
-      <Container maxWidth="sm">
+      <div>
         <TextField
           variant="outlined"
           margin="normal"
-          style={{ height: 60, width: 400 }}
+          style={{ width: 700 }}
           multiline
         />
         <div style={{ float: "right", padding: "30px" }}>
@@ -19,7 +19,7 @@ class MessageForm extends Component {
             Send
           </Button>
         </div>
-      </Container>
+      </div>
     );
   }
 }
