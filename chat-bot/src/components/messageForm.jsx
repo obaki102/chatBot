@@ -14,7 +14,7 @@ class MessageForm extends Component {
           style={{ width: 700 }}
           multiline
         />
-        <div style={{ float: "right", padding: "30px" }}>
+        <div style={{ float: "left" }}>
           <Button variant="contained" color="primary">
             Send
           </Button>
