@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import Error from "@material-ui/icons/ErrorRounded";
 import Image from "../tpx.png";
+import UserImage from "../user.png";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { fetchSubtopic } from "../actions/postActions";
@@ -43,15 +44,13 @@ class Message extends Component {
       avatar = (
         <Tooltip title={new Date().toLocaleString()}>
           <Avatar
+            src={UserImage}
             style={{
-              backgroundColor: "#3b5998",
               margin: 10,
-              width: 40,
-              height: 40
+              width: 60,
+              height: 60
             }}
-          >
-            You
-          </Avatar>
+          />
         </Tooltip>
       );
     }
