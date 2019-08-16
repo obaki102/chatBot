@@ -1,8 +1,9 @@
-import { FETCH_POSTS } from "../actions/types";
+import { FETCH_POSTS, FETCH_SUBTOPIC } from "../actions/types";
 
 const initialState = {
   messages: [],
-  message: {}
+  message: {},
+  subtopic: []
 };
 
 //Evaluate what type to use
@@ -11,7 +12,9 @@ export default function(state = initialState, action) {
     case FETCH_POSTS:
       console.log(action.payload);
       return { ...state, messages: action.payload };
-
+    case FETCH_SUBTOPIC:
+      console.log(action.payload);
+      return { ...state, subtopic: action.payload };
     default:
       return state;
   }

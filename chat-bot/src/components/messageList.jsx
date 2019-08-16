@@ -4,7 +4,7 @@ import List from "@material-ui/core/List";
 import Container from "@material-ui/core/Container";
 
 import Grid from "@material-ui/core/Grid";
-import { deepPurple } from "@material-ui/core/colors";
+import { Badge } from "@material-ui/core";
 import ListItem from "@material-ui/core/ListItem";
 import Button from "@material-ui/core/Button";
 import MessageForm from "../components/messageForm";
@@ -28,8 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
   purpleAvatar: {
     margin: 10,
-    color: "#fff",
-    backgroundColor: deepPurple[500]
+    color: "#fff"
   }
 }));
 
@@ -40,8 +39,7 @@ const useStyles2 = makeStyles({
 
   purpleAvatar: {
     margin: 10,
-    color: "#fff",
-    backgroundColor: deepPurple[500]
+    color: "#fff"
   },
   bigAvatar: {
     margin: 10,
@@ -50,14 +48,6 @@ const useStyles2 = makeStyles({
     backgroundColor: "#fff"
   }
 });
-
-function generate(element) {
-  return [0, 1, 2].map(value =>
-    React.cloneElement(element, {
-      key: value
-    })
-  );
-}
 
 class MessageList extends Component {
   constructor(props) {
@@ -70,27 +60,65 @@ class MessageList extends Component {
         {
           id: 1,
           response: [{ id: 1, topic: "Hi there!? How can I assist you?" }],
-          isRobot: true
+          isRobot: true,
+          isError: false
         }
-      ]
+      ],
+      isTopicOpen: false
     };
   }
 
   sendPost = () => {
+    this.setState({ isTopicOpen: true });
     const userMessage = this.state.messageForm;
-    const keyword = userMessage.match(/[^ ,]+/g).join(",");
-    this.props.fetchResponse(keyword);
     const maxVal = Math.max(...this.state.message.map(i => i.id), 0);
-    this.setState({
-      message: [
-        ...this.state.message,
-        {
-          id: maxVal + 1,
-          response: [{ id: maxVal + 1, topic: userMessage }],
-          isRobot: false
-        }
-      ]
-    });
+    if (userMessage != "") {
+      let keyword = userMessage
+        .trim()
+        .match(/[^ ,]+/g)
+        .join(",");
+      keyword = keyword.replace(/[&\/\\#+()$~%.'":*?<>{}]/g, "");
+      this.props.fetchResponse(keyword);
+
+      this.setState({
+        message: [
+          ...this.state.message,
+          {
+            id: maxVal + 1,
+            response: [{ id: maxVal + 1, topic: userMessage }],
+            isRobot: false,
+            isError: false
+          }
+        ],
+        messageForm: ""
+      });
+    } else {
+      this.setState({
+        message: [
+          ...this.state.message,
+          {
+            id: maxVal + 1,
+            response: [
+              {
+                id: maxVal + 1,
+                topic: "Sorry you entered a blank query. Please try again."
+              }
+            ],
+            isRobot: true,
+            isError: true
+          }
+        ],
+        messageForm: ""
+      });
+    }
+    const textFieldinput = document.getElementById("textArea");
+    textFieldinput.value = "";
+  };
+
+  handleKeyDown = e => {
+    if (e.key === "Enter") {
+      this.sendPost();
+    }
   };
 
   handleChange = name => event => {
@@ -98,18 +126,39 @@ class MessageList extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
+    const maxVal = Math.max(...this.state.message.map(i => i.id), 0);
     if (nextProps.messages) {
-      const maxVal = Math.max(...this.state.message.map(i => i.id), 0);
-      this.setState({
-        message: [
-          ...this.state.message,
-          {
-            id: maxVal + 1,
-            response: nextProps.messages.data,
-            isRobot: true
-          }
-        ]
-      });
+      if (Object.keys(nextProps.messages.data).length === 0) {
+        this.setState({
+          message: [
+            ...this.state.message,
+            {
+              id: maxVal + 1,
+              response: [
+                {
+                  id: maxVal + 1,
+                  topic: "Sorry no related record found."
+                }
+              ],
+              isRobot: true,
+              isError: true
+            }
+          ]
+        });
+      } else {
+        this.setState({
+          message: [
+            ...this.state.message,
+            {
+              id: maxVal + 1,
+              response: nextProps.messages.data,
+              isRobot: true,
+              isError: false
+            }
+          ]
+        });
+      }
+      this.setState({ isTopicOpen: false });
     }
   }
 
@@ -136,14 +185,15 @@ class MessageList extends Component {
         <Divider />
 
         <Grid item xs={12}>
-          <Grid container justify="center" spacing="2">
+          <Grid container justify="center" spacing={2}>
             <Grid item xs={9}>
               <TextField
+                id="textArea"
                 variant="outlined"
                 margin="normal"
                 style={{ width: 700 }}
-                multiline
                 onChange={this.handleChange("messageForm")}
+                onKeyDown={this.handleKeyDown}
               />
             </Grid>
             <Grid item xs={3} style={{ padding: "40px" }}>
